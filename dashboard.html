@@ -1,0 +1,113 @@
+<html>
+    <head>
+
+        <meta http-equiv="refresh" content="10">
+    </head>
+<title>Cloud Computing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" type="text/css" href="dashboard.css">
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<body>
+
+<div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:none" id="mySidebar">
+  <button class="w3-bar-item w3-button w3-large"
+  onclick="w3_close()">Close &times;</button>
+  <a href="#" class="w3-bar-item w3-button">My Dashboard</a>
+  <a href="#" class="w3-bar-item w3-button">Live analysis</a>
+  <a href="#" class="w3-bar-item w3-button">Historical Analysis</a>
+</div>
+
+<div id="main">
+
+<div class="w3-teal">
+  <button id="openNav" class="w3-button w3-teal w3-xlarge" onclick="w3_open()">&#9776;</button>
+  <div class="w3-container">
+    <h1>My Dashboard</h1>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+
+    var x;
+    var y;
+    var url = "http://3.133.114.27/clouddata";
+               
+               var xhttp = new XMLHttpRequest();
+               
+               xhttp.onreadystatechange = function () {
+                   
+                   if (this.readyState == 4 && this.status == 200) {
+                       var data = this.responseText;
+                       
+                       var mydata = JSON.parse(data);
+                        x=mydata[0].temp;
+                        y=mydata[0].hum;
+                 }
+                   };
+                   
+               xhttp.open("GET", "http://3.133.114.27/clouddata", true);
+               xhttp.send();
+              google.charts.load('current', {'packages':['gauge']});
+          google.charts.setOnLoadCallback(drawChart);
+    
+          function drawChart() {
+    
+            var data = google.visualization.arrayToDataTable([
+              ['Label', 'Value'],
+              ['Temperture', 0],
+              ['Humidity', 0]
+            
+            ]);
+    
+            var options = {
+              width: 800, height: 240,
+              redFrom: 90, redTo: 100,
+              yellowFrom:75, yellowTo: 90,
+              minorTicks: 5
+            };
+    
+            var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+    
+            chart.draw(data, options);
+            
+            setInterval(function() {
+                
+              data.setValue(0, 1, x);
+              chart.draw(data, options);
+            }, 100);
+            setInterval(function() {
+              data.setValue(1, 1, y );
+              chart.draw(data, options);
+            }, 100);
+         
+          }
+        </script>
+      </head>
+      <div id="dashboardgauge">
+        <div id="chart_div" style="width: 400px; height: 120px;"></div>
+      </div>
+
+
+
+</div>
+
+<script>
+function w3_open() {
+  document.getElementById("main").style.marginLeft = "25%";
+  document.getElementById("mySidebar").style.width = "25%";
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("openNav").style.display = 'none';
+}
+function w3_close() {
+  document.getElementById("main").style.marginLeft = "0%";
+  document.getElementById("mySidebar").style.display = "none";
+  document.getElementById("openNav").style.display = "inline-block";
+}
+</script>
+
+</body>
+</html>
